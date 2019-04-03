@@ -9,17 +9,6 @@ import librosa.display
 def displaySTFT(STFTSpectrogram, string):
     plt.figure(figsize=(12, 8))
     D = librosa.amplitude_to_db(np.abs(STFTSpectrogram), ref=np.max)
-    plt.subplot(4, 2, 1)
-    librosa.display.specshow(D, y_axis='linear')
-    plt.colorbar(format='%+2.0f dB')
-    plt.title(string)
-    plt.show()
-
-
-def displayExperimentSTFT(STFTSpectrogram, string):
-    plt.figure(figsize=(12, 8))
-    D = librosa.amplitude_to_db(np.abs(STFTSpectrogram), ref=np.max)
-    plt.subplot(4, 2, 1)
     librosa.display.specshow(D, y_axis='linear')
     plt.colorbar(format='%+2.0f dB')
     plt.title(string)
@@ -40,19 +29,19 @@ def plotATestThingy():
     # and thus 172 spectral slices (i.e., columns) per second in the spectrogram.
     hopsamp = fft_size // 8  # 2048 / 8 = 256
 
-    window = np.hanning(fft_size)
+    window = np.hanning(fft_size)  # generate hanning Window
     fft_size = int(fft_size)
-    stft = np.array([np.fft.rfft(window * input_signal[i:i + fft_size])
+    stft = np.array([np.fft.rfft(window * input_signal[i:i + fft_size])  # generate STFT Result matrix Imaginärteil
                      for i in range(0, len(input_signal) - fft_size, hopsamp)])  # geht immer hopsamp size weiter und nimmt die ganzen Werte
-    stft = np.transpose(stft)
+    stft = np.transpose(stft) #this transpose is necessary to have the same kind of directions
     print(stft)
     print("stft")
-    displayExperimentSTFT(stft, "own calculated")
+    displaySTFT(stft, "own calculated")
 
 
 def librosaToCompare():
     y, sr = librosa.load("bkvhi.wav")
-    stft_spectrogram = librosa.stft(y)
+    stft_spectrogram = librosa.stft(y, n_fft= 2048, hop_length= 256)
     print("stft_spectrogram")
     print(stft_spectrogram)
     displaySTFT(stft_spectrogram, "librosa calculated")
